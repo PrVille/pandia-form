@@ -130,6 +130,7 @@ const StyledButton = styled.button<{ $loading?: boolean }>`
   cursor: pointer;
   border-radius: 4px;
   filter: brightness(1);
+  transition: filter 150ms ease-in-out;
 
   &:hover {
     filter: brightness(0.9);
@@ -200,6 +201,10 @@ const StyledConsentWrapper = styled.div`
   margin-bottom: 20px;
 `
 
+const StyledErrorMessage = styled(StyledLabel)`
+  color: red;
+`
+
 const songs = ["Song 1", "Song 2", "Song 3"]
 
 interface FormState {
@@ -208,6 +213,11 @@ interface FormState {
   key: number
   consent: boolean
   file: File | null
+}
+
+type ErrorState = {
+  name: string
+  song: string
 }
 
 const App = () => {
@@ -219,14 +229,27 @@ const App = () => {
     consent: false,
     file: null,
   })
+  const [errorState, setErrorState] = useState<ErrorState>({
+    name: "",
+    song: "",
+  })
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault()
-    setLoading(true)
-    console.log(formState)
 
-    // Simulate form submission
-    setTimeout(() => setLoading(false), 3000)
+    setErrorState({
+      name: formState.name ? "" : "Anna nimi tai nimimerkki!",
+      song: formState.song ? "" : "Valitse biisi!",
+    })
+
+    if (!formState.name || !formState.song) return
+
+    setLoading(true)
+
+    setTimeout(() => {
+      console.log(formState)
+      setLoading(false)
+    }, 3000)
   }
 
   return (
@@ -237,13 +260,13 @@ const App = () => {
           <StyledTitle>Ilmoittautumislomake</StyledTitle>
 
           <StyledLabel>Nimi tai nimimerkki*</StyledLabel>
+          <StyledErrorMessage>{errorState.name}</StyledErrorMessage>
           <StyledInput
             type="text"
             value={formState.name}
             onChange={({ target }) =>
               setFormState({ ...formState, name: target.value })
             }
-            required
           />
 
           <StyledLabel>Kasvokuva</StyledLabel>
@@ -263,12 +286,12 @@ const App = () => {
           </StyledFileInputWrapper>
 
           <StyledLabel>Biisi*</StyledLabel>
+          <StyledErrorMessage>{errorState.song}</StyledErrorMessage>
           <StyledSelect
             value={formState.song}
             onChange={({ target }) =>
               setFormState({ ...formState, song: target.value })
             }
-            required
           >
             <option value="" hidden>
               Valitse alta
