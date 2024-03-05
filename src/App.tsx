@@ -2,6 +2,7 @@ import { useState, FormEvent } from "react"
 import styled, { createGlobalStyle } from "styled-components"
 
 import chevronDown from "./assets/chevron-down.svg"
+import check from "./assets/check.svg"
 
 const GlobalStyles = createGlobalStyle`
   *,
@@ -33,6 +34,7 @@ const StyledTitle = styled.h4`
 const StyledForm = styled.form`
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   padding: 20px;
   border-width: 1px;
   border-style: solid;
@@ -48,14 +50,20 @@ const StyledLabel = styled.label`
 `
 
 const StyledInput = styled.input`
+  width: 100%;
   border-radius: 4px;
   border-style: solid;
   border-width: 1px;
   padding: 15px 10px;
   margin-bottom: 15px;
+
+  &:focus {
+    outline-color: #128559;
+  }
 `
 
 const StyledSelect = styled.select`
+  width: 100%;
   border-radius: 4px;
   border-style: solid;
   border-width: 1px;
@@ -68,19 +76,31 @@ const StyledSelect = styled.select`
   background-position-x: calc(100% - 4px);
   background-position-y: center;
   background-size: 24px;
+  cursor: pointer;
+
+  &:focus {
+    outline-color: #128559;
+  }
 `
 
 const StyledButton = styled.button`
   background-color: #128559;
   color: white;
-  padding: 10px;
+  padding: 10px 30px;
   border: none;
   cursor: pointer;
+  border-radius: 4px;
+  filter: brightness(1);
+
+  &:hover {
+    filter: brightness(0.9);
+  }
 `
 
 const StyledButtonGroup = styled.div`
+  width: 100%;
   display: flex;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 
   & :first-child {
     border-radius: 4px 0px 0px 4px;
@@ -97,11 +117,41 @@ const StyledButtonGroup = styled.div`
 
 const StyledButtonGroupButton = styled(StyledButton)<{ $isActive: boolean }>`
   width: 100%;
+  padding: 10px;
   border-width: 1px;
   border-style: solid;
+  border-radius: 0px;
   border-color: ${(props) => (props.$isActive ? "#128559" : "inherit")};
   background-color: ${(props) => (props.$isActive ? "#128559" : "white")};
   color: ${(props) => (props.$isActive ? "white" : "inherit")};
+`
+
+const StyledCheckbox = styled.input.attrs({ type: "checkbox" })`
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  border-width: 1px;
+  border-style: solid;
+  border-color: gray;
+  border-radius: 4px;
+
+  &:checked {
+    background: url(${check});
+  }
+`
+
+const StyledConsentWrapper = styled.div`
+  label {
+    margin: 0px;
+  }
+
+  display: flex;
+  flex-direction: row-reverse;
+  column-gap: 8px;
+  align-items: center;
+  margin-bottom: 20px;
 `
 
 const songs = ["Song 1", "Song 2", "Song 3"]
@@ -170,21 +220,22 @@ const App = () => {
                 key={key}
                 onClick={() => setFormState({ ...formState, key })}
               >
-                {key}
+                {key > 0 ? "+" + key : key}
               </StyledButtonGroupButton>
             ))}
           </StyledButtonGroup>
 
-          <StyledLabel>
-            Sallin tietojeni tallennuksen karaokejärjestelmään
-          </StyledLabel>
-          <StyledInput
-            type="checkbox"
-            checked={formState.consent}
-            onChange={({ target }) =>
-              setFormState({ ...formState, consent: target.checked })
-            }
-          />
+          <StyledConsentWrapper>
+            <StyledLabel>
+              Sallin tietojeni tallennuksen karaokejärjestelmään
+            </StyledLabel>
+            <StyledCheckbox
+              checked={formState.consent}
+              onChange={({ target }) =>
+                setFormState({ ...formState, consent: target.checked })
+              }
+            />
+          </StyledConsentWrapper>
 
           <StyledButton type="submit">Ilmoittaudu</StyledButton>
         </StyledForm>
