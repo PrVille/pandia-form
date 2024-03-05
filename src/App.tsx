@@ -78,6 +78,32 @@ const StyledButton = styled.button`
   cursor: pointer;
 `
 
+const StyledButtonGroup = styled.div`
+  display: flex;
+  margin-bottom: 15px;
+
+  & :first-child {
+    border-radius: 4px 0px 0px 4px;
+  }
+
+  & :last-child {
+    border-radius: 0px 4px 4px 0px;
+  }
+
+  & :nth-child(n + 2) {
+    margin-left: -1px;
+  }
+`
+
+const StyledButtonGroupButton = styled(StyledButton)<{ $isActive: boolean }>`
+  width: 100%;
+  border-width: 1px;
+  border-style: solid;
+  border-color: ${(props) => (props.$isActive ? "#128559" : "inherit")};
+  background-color: ${(props) => (props.$isActive ? "#128559" : "white")};
+  color: ${(props) => (props.$isActive ? "white" : "inherit")};
+`
+
 const songs = ["Song 1", "Song 2", "Song 3"]
 
 interface FormState {
@@ -136,16 +162,18 @@ const App = () => {
           </StyledSelect>
 
           <StyledLabel>Sävellaji*</StyledLabel>
-          <StyledInput
-            type="range"
-            min={-2}
-            max={2}
-            value={formState.key}
-            onChange={({ target }) =>
-              setFormState({ ...formState, key: Number(target.value) })
-            }
-            required
-          />
+          <StyledButtonGroup>
+            {[-2, -1, 0, 1, 2].map((key) => (
+              <StyledButtonGroupButton
+                $isActive={key === formState.key}
+                type="button"
+                key={key}
+                onClick={() => setFormState({ ...formState, key })}
+              >
+                {key}
+              </StyledButtonGroupButton>
+            ))}
+          </StyledButtonGroup>
 
           <StyledLabel>
             Sallin tietojeni tallennuksen karaokejärjestelmään
