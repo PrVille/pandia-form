@@ -62,6 +62,32 @@ const StyledInput = styled.input`
   }
 `
 
+const StyledFileInputWrapper = styled.div`
+  position: relative;
+  width: 100%;
+`
+
+const StyledFileInputOverlay = styled.button`
+  width: 100%;
+  background-color: white;
+  border-radius: 4px;
+  padding: 15px 10px;
+  font-size: 0.75em;
+  font-weight: 700;
+  border-style: dashed;
+  border-color: dimgray;
+  border-width: 1px;
+  color: dimgray;
+  margin-bottom: 15px;
+`
+
+const StyledFileInput = styled(StyledInput).attrs({ type: "file" })`
+  position: absolute;
+  left: 0;
+  opacity: 0;
+  cursor: pointer;
+`
+
 const StyledSelect = styled.select`
   width: 100%;
   border-radius: 4px;
@@ -161,6 +187,7 @@ interface FormState {
   song: string
   key: number
   consent: boolean
+  file?: File
 }
 
 const App = () => {
@@ -169,6 +196,7 @@ const App = () => {
     song: "",
     key: 0,
     consent: false,
+    file: undefined,
   })
 
   const handleSubmit = (event: FormEvent) => {
@@ -192,6 +220,22 @@ const App = () => {
             }
             required
           />
+
+          <StyledLabel>Kasvokuva</StyledLabel>
+          <StyledFileInputWrapper>
+            <StyledFileInputOverlay>
+              {formState.file ? formState.file.name : "+ Tuo kasvokuva"}
+            </StyledFileInputOverlay>
+            <StyledFileInput
+              accept=".jpg,.jpeg,.png"
+              onChange={({ target }) =>
+                setFormState({
+                  ...formState,
+                  file: target.files ? target.files[0] : undefined,
+                })
+              }
+            />
+          </StyledFileInputWrapper>
 
           <StyledLabel>Biisi*</StyledLabel>
           <StyledSelect
