@@ -1,5 +1,5 @@
 import { useState, FormEvent } from "react"
-import styled, { createGlobalStyle } from "styled-components"
+import styled, { createGlobalStyle, css, keyframes } from "styled-components"
 
 import chevronDown from "./assets/chevron-down.svg"
 import check from "./assets/check.svg"
@@ -86,6 +86,10 @@ const StyledFileInput = styled(StyledInput).attrs({ type: "file" })`
   left: 0;
   opacity: 0;
   cursor: pointer;
+
+  &::-webkit-file-upload-button {
+    display: none;
+  }
 `
 
 const StyledSelect = styled.select`
@@ -109,7 +113,16 @@ const StyledSelect = styled.select`
   }
 `
 
-const StyledButton = styled.button`
+const pulse = keyframes`
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+`
+
+const StyledButton = styled.button<{ $loading?: boolean }>`
   background-color: #128559;
   color: white;
   padding: 10px 30px;
@@ -121,6 +134,13 @@ const StyledButton = styled.button`
   &:hover {
     filter: brightness(0.9);
   }
+
+  ${(props) =>
+    props.$loading &&
+    css`
+      pointer-events: none;
+      animation: ${pulse} 2s infinite;
+    `}
 `
 
 const StyledButtonGroup = styled.div`
@@ -187,21 +207,26 @@ interface FormState {
   song: string
   key: number
   consent: boolean
-  file?: File
+  file: File | null
 }
 
 const App = () => {
+  const [loading, setLoading] = useState<boolean>(false)
   const [formState, setFormState] = useState<FormState>({
     name: "",
     song: "",
     key: 0,
     consent: false,
-    file: undefined,
+    file: null,
   })
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault()
+    setLoading(true)
     console.log(formState)
+
+    // Simulate form submission
+    setTimeout(() => setLoading(false), 3000)
   }
 
   return (
@@ -231,7 +256,7 @@ const App = () => {
               onChange={({ target }) =>
                 setFormState({
                   ...formState,
-                  file: target.files ? target.files[0] : undefined,
+                  file: target.files ? target.files[0] : null,
                 })
               }
             />
@@ -281,7 +306,9 @@ const App = () => {
             />
           </StyledConsentWrapper>
 
-          <StyledButton type="submit">Ilmoittaudu</StyledButton>
+          <StyledButton type="submit" $loading={loading}>
+            Ilmoittaudu
+          </StyledButton>
         </StyledForm>
       </StyledApp>
     </>
