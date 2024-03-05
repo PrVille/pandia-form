@@ -2,6 +2,8 @@
 
 Pandian Junior Frontend kehittäjä -tehtävä: Ilmoittautumislomake karaokeen Kennon visuaalisen ilmeen mukaisesti.
 
+Live @ [https://pandia-form.vercel.app/](https://pandia-form.vercel.app/)
+
 ## Installation
 
 1. Clone the repository:
